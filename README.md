@@ -1,1 +1,258 @@
-# neoncypher
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Caesar Cipher — Dark Neon</title>
+  <style>
+    :root{
+      --bg1:#0f1724;
+      --bg2:#0b0b12;
+      --accent1:#6ee7f8;
+      --accent2:#8b5cf6;
+      --glass: rgba(255,255,255,0.04);
+      --card-shadow: 0 10px 30px rgba(11,9,20,0.6);
+      --neon-shadow: 0 0 12px rgba(110,231,248,0.25), 0 0 30px rgba(139,92,246,0.12);
+      font-family: Inter, system-ui, 'Segoe UI', Arial;
+    }
+
+    *{box-sizing:border-box}
+    html,body{margin:0;height:100%}
+
+    body{
+      background: radial-gradient(1200px 600px at 10% 10%, rgba(139,92,246,0.12), transparent),
+                  radial-gradient(1000px 500px at 90% 90%, rgba(110,231,248,0.08), transparent),
+                  linear-gradient(180deg,var(--bg1),var(--bg2));
+      color:#e6eef8;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      padding:28px;
+    }
+
+    .hero{
+      width:100%;
+      max-width:680px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:14px;
+      padding:28px;
+      border:1px solid rgba(255,255,255,0.03);
+      box-shadow:var(--card-shadow);
+      backdrop-filter: blur(8px);
+    }
+
+    .logo-card{
+      font-family: 'Courier New', monospace;
+      color:var(--accent1);
+      background: linear-gradient(90deg, rgba(110,231,248,0.03), rgba(139,92,246,0.03));
+      border-radius:10px;
+      padding:16px;
+      margin-bottom:16px;
+      border:1px solid rgba(110,231,248,0.06);
+      box-shadow: var(--neon-shadow);
+      font-size:10px;
+      line-height:1.1;
+      white-space:pre;
+      overflow:auto;
+    }
+
+    h1{margin:6px 0 12px;font-size:20px;letter-spacing:0.6px}
+    p.lead{margin:0 0 18px;color:rgba(230,238,248,0.75)}
+
+    .controls{
+      display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px;align-items:center
+    }
+
+    .select,.input,.btn{
+      border-radius:10px;
+      padding:10px 12px;
+      background:var(--glass);
+      border:1px solid rgba(255,255,255,0.05);
+      font-size:15px;color:inherit;
+      box-shadow:inset 0 -6px 18px rgba(0,0,0,0.35);
+    }
+
+    .input{flex:1;min-width:150px}
+    .btn{
+      background: linear-gradient(90deg,var(--accent1),var(--accent2));
+      border:none;
+      color:#02101a;
+      cursor:pointer;
+      font-weight:700;
+      box-shadow: var(--neon-shadow);
+      transition: transform .13s ease;
+    }
+    .btn:hover{transform:translateY(-3px)}
+
+    textarea{
+      width:100%;
+      min-height:150px;
+      background: rgba(255,255,255,0.03);
+      border:1px solid rgba(255,255,255,0.04);
+      border-radius:12px;
+      padding:14px;
+      resize:vertical;
+      font-size:15px;
+      color:#e6eef8;
+    }
+
+    .result-card{
+      margin-top:16px;
+      padding:14px;
+      border-radius:12px;
+      background:linear-gradient(180deg, rgba(110,231,248,0.02), rgba(139,92,246,0.02));
+      border:1px solid rgba(110,231,248,0.06);
+      box-shadow:var(--neon-shadow);
+    }
+
+    .big-result{
+      font-family: 'Courier New', monospace;
+      font-size:18px;
+      min-height:100px;
+      padding:12px;
+      background:rgba(0,0,0,0.18);
+      border-radius:10px;
+      white-space:pre-wrap;
+      word-break:break-word;
+      color:#bdeffd;
+    }
+
+    .icon-btn{
+      background:transparent;
+      border:1px solid rgba(255,255,255,0.05);
+      padding:6px 10px;
+      border-radius:8px;
+      cursor:pointer;
+      font-size:12px;
+      color:#ccc;
+    }
+
+    footer{
+      margin-top:16px;
+      font-size:13px;
+      color:rgba(230,238,248,0.45);
+      text-align:center;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="hero">
+
+    <div class="logo-card">
+ ,adPPYba, ,adPPYYba,  ,adPPYba, ,adPPYba, ,adPPYYba, 8b,dPPYba,
+a8"     "" ""     `Y8 a8P_____88 I8[    "" ""     `Y8 88P'   "Y8
+8b         ,adPPPPP88 8PP"""""""  `"Y8ba,  ,adPPPPP88 88
+"8a,   ,aa 88,    ,88 "8b,   ,aa aa    ]8I 88,    ,88 88
+ `"Ybbd8"' `"8bbdP"Y8  `"Ybbd8"' `"YbbdP"' `"8bbdP"Y8 88
+    </div>
+
+    <h1>Caesar Cipher — Dark Neon</h1>
+    <p class="lead">Encode or decode text with the Caesar cipher. Works for any shift.</p>
+
+    <div class="controls">
+      <select id="mode" class="select">
+        <option value="encode">Encode</option>
+        <option value="decode">Decode</option>
+      </select>
+
+      <input id="shift" class="input" type="number" value="3" />
+      <button class="btn" id="runBtn">Run</button>
+    </div>
+
+    <textarea id="text">hello world</textarea>
+
+    <div class="result-card">
+      <div style="display:flex;justify-content:space-between;">
+        <span style="font-size:12px;color:#aaa">Result</span>
+        <div style="display:flex;gap:8px;">
+          <button id="copyBtn" class="icon-btn">Copy</button>
+          <button id="swapBtn" class="icon-btn">Swap</button>
+          <button id="clearBtn" class="icon-btn">Clear</button>
+        </div>
+      </div>
+
+      <div id="output" class="big-result">kvnqk tqdld</div>
+    </div>
+
+    <footer>Press Enter inside the message box to run.</footer>
+  </main>
+
+<script>
+(function(){
+  const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+
+  const el = {
+    mode: document.getElementById('mode'),
+    shift: document.getElementById('shift'),
+    runBtn: document.getElementById('runBtn'),
+    text: document.getElementById('text'),
+    output: document.getElementById('output'),
+    copyBtn: document.getElementById('copyBtn'),
+    swapBtn: document.getElementById('swapBtn'),
+    clearBtn: document.getElementById('clearBtn')
+  };
+
+  function normalizeShift(n){
+    let s = Math.trunc(n) % 26;
+    if (s < 0) s += 26;
+    return s;
+  }
+
+  function caesar(text, shift, mode){
+    if (mode === 'decode') shift = -shift;
+    shift = normalizeShift(shift);
+    let out = '';
+    for (let ch of text){
+      const lower = ch.toLowerCase();
+      if (!alphabet.includes(lower)){
+        out += ch;
+        continue;
+      }
+      const idx = alphabet.indexOf(lower);
+      let nidx = (idx + shift + 26) % 26;
+      let newCh = alphabet[nidx];
+      newCh = (ch === ch.toUpperCase()) ? newCh.toUpperCase() : newCh;
+      out += newCh;
+    }
+    return out;
+  }
+
+  function render(){
+    const mode = el.mode.value;
+    const shiftVal = Number(el.shift.value) || 0;
+    el.output.textContent = caesar(el.text.value, shiftVal, mode);
+  }
+
+  el.runBtn.onclick = render;
+
+  el.text.addEventListener('keydown', e=>{
+    if(e.key === 'Enter' && !e.shiftKey){
+      e.preventDefault();
+      render();
+    }
+  });
+
+  el.copyBtn.onclick = async ()=>{
+    navigator.clipboard.writeText(el.output.textContent);
+    el.copyBtn.textContent = "Copied";
+    setTimeout(()=> el.copyBtn.textContent="Copy", 800);
+  };
+
+  el.swapBtn.onclick = ()=>{
+    el.text.value = el.output.textContent;
+    el.mode.value = el.mode.value === "encode" ? "decode" : "encode";
+    render();
+  };
+
+  el.clearBtn.onclick = ()=>{
+    el.text.value="";
+    el.output.textContent="";
+  };
+
+  render();
+})();
+</script>
+
+</body>
+</html>
